@@ -80,17 +80,21 @@ public class Main
 
         else if (findKeyword(statement, "favorite", 0) >= 0)
         {
-            response = "I don't have tast buds";
+            response = "I don't have strong opinions on this subject.";
         }
         else if (findKeyword(statement, "I'm feeling", 0) >= 0
+                || findKeyword(statement, "I am feeling", 0) >= 0
                 || findKeyword(statement, "I feel", 0) >= 0)
         {
             response = "Why are you feeling this way?";
         }
-        
+        else if (findKeyword(statement, "I think", 0) >= 0)
+        {
+            response = "Expand more on this thought.";
+        }
         
         //Do not change anything else in this method below here until part 5 and 6
-        else if (findKeyword(statement, "I want to", 0) >= 0)
+        else if (findKeyword(statement, "I want", 0) >= 0)
         {
             response = transformIWantToStatement(statement);
         }
@@ -99,10 +103,9 @@ public class Main
         {
             // Look for a two word (you <something> me)
             // pattern
-            int psn = findKeyword(statement, "you", 0);
+            int psn = findKeyword(statement, "I", 0);
 
-            if (psn >= 0
-                    && findKeyword(statement, "me", psn) >= 0)
+            if (psn >= 0 && findKeyword(statement, "you", psn) >= 0)
             {
                 response = transformYouMeStatement(statement);
             }
@@ -170,9 +173,9 @@ public class Main
         {
             statement = statement.substring(0, statement.length() - 1);
         }
-        int psn = findKeyword (statement, "I want to", 0);
-        String restOfStatement = statement.substring(psn + 9).trim();
-        return "What would it mean to " + restOfStatement + "?";
+        int psn = findKeyword (statement, "I want", 0);
+        String restOfStatement = statement.substring(psn + 6).trim();
+        return "Would you really be happy if you had " + restOfStatement + "?";
     }
 
     /**
@@ -192,11 +195,19 @@ public class Main
             statement = statement.substring(0, statement.length() - 1);
         }
         
-        int psnOfYou = findKeyword (statement, "you", 0);
-        int psnOfMe = findKeyword (statement, "me", psnOfYou + 3);
+        int psnOfI = findKeyword (statement, "I", 0);
+        int psnOfYou = findKeyword (statement, "you", psnOfI + 1);
+
+        String restOfStatement = statement.substring(psnOfI + 1, psnOfYou).trim();
+        return "Why do you " + restOfStatement + " me?";
         
-        String restOfStatement = statement.substring(psnOfYou + 3, psnOfMe).trim();
-        return "What makes you think that I " + restOfStatement + " you?";
+        
+        
+        /*    int psnOfYou = findKeyword (statement, "you", 0);
+              int psnOfMe = findKeyword (statement, "me", psnOfYou + 3);
+        
+              String restOfStatement = statement.substring(psnOfYou + 3, psnOfMe).trim();
+              return "What makes you think that I " + restOfStatement + " you?";     */
     }
     
     
@@ -217,8 +228,7 @@ public class Main
      * @return the index of the first occurrence of goal in
      *         statement or -1 if it's not found
      */
-    private static int findKeyword(String statement, String goal,
-            int startPos)
+    private static int findKeyword(String statement, String goal, int startPos)
     {
         String phrase = statement.trim().toLowerCase();
         goal = goal.toLowerCase();
